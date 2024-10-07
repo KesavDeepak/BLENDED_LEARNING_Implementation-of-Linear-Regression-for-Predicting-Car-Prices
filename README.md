@@ -72,7 +72,9 @@ plt.show()
 ```
 
 ## Output:
-![simple linear regression model for predicting the marks scored](sam.png)
+![image](https://github.com/user-attachments/assets/a8b1bc6c-16f2-410f-afc0-0ae28114f977)
+![image](https://github.com/user-attachments/assets/87fd9179-9f44-4d5b-ab75-fa3e8b829a3e)
+
 
 
 ## Result:
