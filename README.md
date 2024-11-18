@@ -8,15 +8,15 @@ To write a program to predict car prices using a linear regression model and tes
 2. Anaconda – Python 3.7 Installation / Jupyter notebook
 
 ## Algorithm
-1. Import Libraries: Bring in essential libraries such as pandas, numpy, matplotlib, and sklearn.
-2. Load Dataset: Import the dataset containing car prices along with relevant features.
-3. Data Preprocessing: Manage missing data and select key features for the model, if required.
-4. Split Data: Divide the dataset into training and testing subsets.
-5. Train Model: Build a linear regression model and train it using the training data.
-6. Make Predictions: Apply the model to predict outcomes for the test set.
-7. Evaluate Model: Measure the model's performance using metrics like R² score, Mean Absolute Error (MAE), etc.
-8. Check Assumptions: Plot residuals to verify assumptions like homoscedasticity, normality, and linearity.
-9. Output Results: Present the predictions and evaluation metrics.
+1. Import Required Libraries: Bring in essential libraries such as pandas, numpy, matplotlib, and sklearn.
+2. Dataset Loading: Load the dataset containing car prices and associated features.
+3. Data Preparation: Address missing data and perform feature selection if needed.
+4. Data Splitting: Divide the dataset into training and testing subsets.
+5. Model Training: Develop a linear regression model and train it using the training data.
+6. Prediction Generation: Apply the model to predict outcomes for the test dataset.
+7. Model Evaluation: Evaluate the model's performance using metrics like R² score, Mean Absolute Error (MAE), etc.
+8. Assumption Verification: Analyze residual plots to check for homoscedasticity, normal distribution, and linearity.
+9. Result Presentation: Display the predictions and performance evaluation metrics.
 
 ## Program:
 ```
@@ -25,55 +25,75 @@ To write a program to predict car prices using a linear regression model and tes
 Developed by: Kesav Deepak Sridharan
 RegisterNumber: 212223230104
 */
+
 # Import necessary libraries
 import pandas as pd
-import matplotlib.pyplot as plt
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error, r2_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
 
-# Load the dataset from the URL
-data = pd.read_csv("https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-ML240EN-SkillsNetwork/labs/data/CarPrice_Assignment.csv")
+# Load the dataset
+url = 'https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBM-ML240EN-SkillsNetwork/labs/data/CarPrice_Assignment.csv'
+df = pd.read_csv(url)
 
-# Display the first few rows of the dataset
-print(data.head())
+# Select relevant features and target variable
+X = df[['enginesize', 'horsepower', 'citympg', 'highwaympg']]  # Features
+y = df['price']  # Target variable
 
-# Data Preprocessing
-# Handle missing values (if any)
-data = data.dropna()  # Drop rows with missing values
-
-# Select features and target variable
-# Assume 'price' is the target variable and 'horsepower', 'curbweight', 'enginesize', and 'highwaympg' are features
-X = data[['horsepower', 'curbweight', 'enginesize', 'highwaympg']]
-y = data['price']
-
-# Split the data into training and testing sets
+# Split the dataset
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Train the linear regression model
 model = LinearRegression()
 model.fit(X_train, y_train)
 
-# Make predictions
+# Predictions
 y_pred = model.predict(X_test)
 
-# Evaluate the model
-print("Mean Absolute Error:", mean_absolute_error(y_test, y_pred))
+# Model Evaluation
+print("Coefficients:", model.coef_)
+print("Intercept:", model.intercept_)
 print("Mean Squared Error:", mean_squared_error(y_test, y_pred))
-print("R² Score:", r2_score(y_test, y_pred))
+print("R-squared:", r2_score(y_test, y_pred))
 
-# Check model assumptions
-plt.scatter(y_pred, y_test - y_pred)
-plt.xlabel('Predicted Prices')
-plt.ylabel('Residuals')
-plt.title('Residuals vs Predicted Prices')
-plt.axhline(0, color='red', linestyle='--')
+# 1. Assumption: Linearity
+plt.scatter(y_test, y_pred)
+plt.title("Linearity: Observed vs Predicted Prices")
+plt.xlabel("Observed Prices")
+plt.ylabel("Predicted Prices")
+plt.show()
+
+# 2. Assumption: Independence (Durbin-Watson test)
+residuals = y_test - y_pred
+dw_test = sm.stats.durbin_watson(residuals)
+print(f"Durbin-Watson Statistic: {dw_test}")
+
+# 3. Assumption: Homoscedasticity
+sns.scatterplot(x=y_pred, y=residuals)
+plt.axhline(y=0, color='r', linestyle='--')
+plt.title("Homoscedasticity: Residuals vs Predicted Prices")
+plt.xlabel("Predicted Prices")
+plt.ylabel("Residuals")
+plt.show()
+
+# 4. Assumption: Normality of residuals
+sns.histplot(residuals, kde=True)
+plt.title("Normality: Histogram of Residuals")
+plt.show()
+
+sm.qqplot(residuals, line='45')
+plt.title("Normality: Q-Q Plot of Residuals")
 plt.show()
 ```
 
 ## Output:
-![image](https://github.com/user-attachments/assets/a8b1bc6c-16f2-410f-afc0-0ae28114f977)
-![image](https://github.com/user-attachments/assets/87fd9179-9f44-4d5b-ab75-fa3e8b829a3e)
+![image](https://github.com/user-attachments/assets/e9d478be-ff46-4658-adb3-54697aa29d8d)
+
+![image](https://github.com/user-attachments/assets/24fc296e-f606-4d30-84a0-6df83dca8ad0)
 
 
 
